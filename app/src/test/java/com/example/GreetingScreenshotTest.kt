@@ -21,7 +21,7 @@ class GreetingScreenshotTest {
 
   @Test
   fun greeting_screenshot() {
-    composeTestRule.setContent { MyApplicationTheme { androidx.compose.material3.Text("FindMyDoc Sandbox") } }
+    composeTestRule.setContent { MyApplicationTheme { androidx.compose.material3.Text("SeekMyDocs Sandbox") } }
 
     composeTestRule.onRoot().captureRoboImage(filePath = "src/test/screenshots/greeting.png")
   }

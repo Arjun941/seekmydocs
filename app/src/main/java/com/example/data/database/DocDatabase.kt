@@ -32,7 +32,7 @@ abstract class DocDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     DocDatabase::class.java,
-                    "findmydoc_database"
+                    "seekmydocs_database"
                 )
                 .fallbackToDestructiveMigration()
                 .build()

@@ -1,8 +1,8 @@
-# FindMyDoc
+# SeekMyDocs
 
-**FindMyDoc** is an offline, privacy-first document search engine for Android. It indexes documents already on your device — PDFs, Office files, text, and more — and lets you find them instantly with filename, keyword, OCR, or on-device semantic search. No document content ever needs to leave the device to be searchable.
+**SeekMyDocs** is an offline, privacy-first document search engine for Android. It indexes documents already on your device — PDFs, Office files, text, and more — and lets you find them instantly with filename, keyword, OCR, or on-device semantic search. No document content ever needs to leave the device to be searchable.
 
-> Built with Kotlin, Jetpack Compose, and on-device ML (TensorFlow Lite). Originally scaffolded via Google AI Studio.
+> Built with Kotlin, Jetpack Compose, and on-device ML (TensorFlow Lite).
 
 ## Features
 
@@ -19,7 +19,6 @@
 - **Open/share documents** directly from search results via a `FileProvider`
 - **Dashboard** showing indexing stats: documents indexed, chunks, embeddings generated, OCR pages cached, storage used, last sync time
 - **Settings** to toggle auto-indexing, OCR, semantic search, embedding engine, and dark mode
-- Optional **Gemini / Firebase AI** integration for cloud-assisted features, gated behind a user-supplied API key
 
 ### Supported document formats
 
@@ -36,8 +35,7 @@ PDF, DOC/DOCX, XLS/XLSX, PPT/PPTX, TXT, CSV, MD, JSON, XML, EPUB, ODT/ODS/ODP
 | Background work | WorkManager |
 | Networking | Retrofit, Moshi, OkHttp |
 | On-device embeddings | TensorFlow Lite (Gemma embedding model, downloaded from Hugging Face on first run) |
-| OCR | ML Kit Text Recognition *(currently stubbed — see [Known Limitations](#known-limitations))* |
-| Cloud AI (optional) | Firebase AI / Gemini API, Firebase App Check |
+| OCR | Placeholder/simulated only — see [Known Limitations](#known-limitations) |
 | Testing | JUnit, Robolectric, Espresso, Roborazzi (screenshot tests) |
 
 ## Project Structure
@@ -64,30 +62,29 @@ app/src/main/java/com/example/
 
 ### Prerequisites
 
-- [Android Studio](https://developer.android.com/studio) (recent stable version)
+- [Android Studio](https://developer.android.com/studio) (recent stable version) or a command-line Gradle/JDK 17 setup
+- **Gradle 9.3.1+** — required by AGP 9.1.1. The committed Gradle wrapper (`gradlew`/`gradlew.bat`) will download it automatically on first run
 - A physical device or emulator running **Android 7.0 (API 24)** or higher
-- (Optional) A [Gemini API key](https://ai.google.dev/) for cloud AI features
 
 ### Setup
 
-1. Clone the repository and open it in Android Studio.
+1. Clone the repository and open it in Android Studio (or run `./gradlew installDebug` from the command line).
 2. Let Android Studio sync Gradle and resolve any suggested fixes.
-3. Create a `.env` file in the project root (see `.env.example`) and set your key:
+3. For debug builds, Android Studio will generate/use a local `debug.keystore` automatically. If building from the command line, generate one at the project root:
    ```
-   GEMINI_API_KEY=your_gemini_api_key_here
+   keytool -genkeypair -v -keystore debug.keystore -alias androiddebugkey \
+     -storepass android -keypass android -keyalg RSA -keysize 2048 -validity 10000 \
+     -dname "CN=Android Debug,O=Android,C=US"
    ```
-   This is optional — the app builds and runs without it, but cloud AI features via Firebase/Gemini will be unavailable.
-4. If you plan to use Firebase-backed features, add your own `google-services.json` to `app/`. The build does not fail without one (`googleServices.missing.passthrough = true`), but Firebase AI calls will not work.
-5. For debug builds, Android Studio will generate/use a local `debug.keystore` automatically.
-6. Run the app on an emulator or physical device.
+4. Run the app on an emulator or physical device.
 
-On first launch, the app downloads a small Gemma embedding model (and tokenizer) from Hugging Face to enable semantic search — an internet connection is required at least once for this.
+On first launch, the app downloads a Gemma embedding model (and tokenizer) from Hugging Face to enable semantic search — an internet connection is required at least once for this.
 
 ### Permissions
 
 The app requests:
 - `READ_EXTERNAL_STORAGE` / `MANAGE_EXTERNAL_STORAGE` — to scan documents across device storage
-- `INTERNET` / `ACCESS_NETWORK_STATE` — to download the embedding model and (optionally) call Gemini/Firebase
+- `INTERNET` / `ACCESS_NETWORK_STATE` — to download the embedding model
 
 ## Building a Release
 
@@ -101,10 +98,8 @@ Supply your own keystore and credentials before building a release APK/AAB — n
 
 ## Known Limitations
 
-- **OCR is currently stubbed**: `LocalOcrEngine` returns simulated placeholder text rather than calling ML Kit, even though the ML Kit Text Recognition dependency is included.
-- **ONNX Runtime** is included as a dependency but not currently used by the embedding pipeline (TensorFlow Lite is used instead) — likely reserved for a future/alternate model backend.
-- Several dependencies (CameraX, Coil, Accompanist Permissions, DataStore Preferences, Play Services Location) are declared but commented out, suggesting planned-but-unbuilt features (e.g. camera-based capture, location tagging).
-- No Gradle wrapper, CI configuration, or LICENSE file is currently included in the repository.
+- **OCR is currently stubbed**: `LocalOcrEngine` returns simulated placeholder text rather than performing real text recognition.
+- No CI configuration or LICENSE file is currently included in the repository.
 
 ## License
 

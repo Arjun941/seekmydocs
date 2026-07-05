@@ -143,7 +143,7 @@ class ExampleUnitTest {
 
             // Create tokenizer
             val tokenizer = SentencePieceTokenizer(pieces)
-            val sampleText = "Hello, world! This is FindMyDoc offline search."
+            val sampleText = "Hello, world! This is SeekMyDocs offline search."
             val tokens = tokenizer.tokenize(sampleText)
             println("Sample text: \"$sampleText\"")
             println("Token IDs: $tokens")

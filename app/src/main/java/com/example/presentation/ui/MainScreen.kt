@@ -127,7 +127,7 @@ fun MainScreen(
             onDismissRequest = { showPermissionDialog = false },
             title = { Text("Storage Permission Required") },
             text = { 
-                Text("FindMyDoc needs \"All Files Access\" to scan and index document files (PDF, Excel, Word, Text, EPUB) on your device storage. All processing is kept offline and secure on your device.")
+                Text("SeekMyDocs needs \"All Files Access\" to scan and index document files (PDF, Excel, Word, Text, EPUB) on your device storage. All processing is kept offline and secure on your device.")
             },
             confirmButton = {
                 TextButton(
@@ -263,7 +263,7 @@ fun SearchTabContent(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "FindMyDoc",
+                text = "SeekMyDocs",
                 style = MaterialTheme.typography.headlineMedium.copy(
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.5.sp
@@ -320,7 +320,7 @@ fun SearchTabContent(
                         onConfirmAction(
                             ConfirmationDialogState(
                                 title = "Load Sandbox Files",
-                                message = "Would you like to inject simulated sample documents into your offline index? This lets you test FindMyDoc's hybrid keyword and vector semantic search instantly, without needing actual files on your storage.",
+                                message = "Would you like to inject simulated sample documents into your offline index? This lets you test SeekMyDocs' hybrid keyword and vector semantic search instantly, without needing actual files on your storage.",
                                 confirmText = "Load Sandbox",
                                 onConfirm = { viewModel.injectSandboxDocuments() }
                             )
@@ -593,7 +593,7 @@ fun NoDocumentsHeroCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "FindMyDoc scans your device locally to enable instant keyword and semantic vector search on PDFs, Excel spreadsheets, text docs, and PowerPoint presentation notes. No file contents ever leave your phone.",
+                text = "SeekMyDocs scans your device locally to enable instant keyword and semantic vector search on PDFs, Excel spreadsheets, text docs, and PowerPoint presentation notes. No file contents ever leave your phone.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
                 modifier = Modifier.padding(horizontal = 4.dp),
@@ -1406,7 +1406,7 @@ fun SettingsTabContent(
                     Text("Privacy Manifest", fontWeight = FontWeight.Bold, fontSize = 13.sp)
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "FindMyDoc functions 100% offline. No telemetry APIs, remote servers, cloud networks, or accounts are configured. Your document structures, extracted phrases, and mathematical query vectors remain strictly localized in SQLite on your device.",
+                        text = "SeekMyDocs functions 100% offline. No telemetry APIs, remote servers, cloud networks, or accounts are configured. Your document structures, extracted phrases, and mathematical query vectors remain strictly localized in SQLite on your device.",
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         lineHeight = 15.sp

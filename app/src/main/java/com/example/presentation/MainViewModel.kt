@@ -80,7 +80,7 @@ class MainViewModel(private val context: Context) : ViewModel() {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Shared preferences for settings persistence
-    private val prefs = context.getSharedPreferences("findmydoc_settings", Context.MODE_PRIVATE)
+    private val prefs = context.getSharedPreferences("seekmydocs_settings", Context.MODE_PRIVATE)
 
     // Settings
     private val _settingsState = MutableStateFlow(SettingsState())
@@ -272,7 +272,7 @@ class MainViewModel(private val context: Context) : ViewModel() {
                 context.startActivity(intent)
             } catch (e: Exception) {
                 // If SAF viewer fails because it's a simulated sandbox URI, mock it with a helpful toast
-                if (doc.uri.startsWith("content://com.findmydoc.sandbox")) {
+                if (doc.uri.startsWith("content://com.seekmydocs.sandbox")) {
                     Toast.makeText(
                         context,
                         "Opening Sandbox File: ${doc.fileName} (${doc.documentType})\nEverything runs secure, offline!",
@@ -304,7 +304,7 @@ class MainViewModel(private val context: Context) : ViewModel() {
             }
             context.startActivity(Intent.createChooser(intent, "Share Document"))
         } catch (e: Exception) {
-            if (doc.uri.startsWith("content://com.findmydoc.sandbox")) {
+            if (doc.uri.startsWith("content://com.seekmydocs.sandbox")) {
                 Toast.makeText(
                     context,
                     "Sharing sandbox placeholder file: ${doc.fileName}",

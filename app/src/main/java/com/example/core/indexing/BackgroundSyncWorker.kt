@@ -38,7 +38,7 @@ class BackgroundSyncWorker(
     }
 
     companion object {
-        private const val UNIQUE_WORK_NAME = "com.findmydoc.periodic_sync_work"
+        private const val UNIQUE_WORK_NAME = "com.seekmydocs.periodic_sync_work"
 
         fun schedule(context: Context) {
             val constraints = Constraints.Builder()
