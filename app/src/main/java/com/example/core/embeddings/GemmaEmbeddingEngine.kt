@@ -20,7 +20,7 @@ class GemmaEmbeddingEngine(
 ) : EmbeddingEngine {
 
     val modelDir = File(context.filesDir, "models/gemma-300m")
-    val modelFile = File(modelDir, "embeddinggemma-300m.tflite")
+    val modelFile = File(modelDir, "embeddinggemma-300m-seq2048.litertlm")
     val vocabFile = File(modelDir, "sentencepiece.model")
 
     override val modelDirName: String get() = "gemma-300m"
@@ -106,7 +106,7 @@ class GemmaEmbeddingEngine(
             // 2. Download Gemma Model TFLite if it doesn't exist
             if (!modelFile.exists() || modelFile.length() == 0L) {
                 onProgress("Downloading Gemma Model...", 0f)
-                val modelUrl = "https://huggingface.co/litert-community/embeddinggemma-300m/resolve/main/embeddinggemma-300m.tflite"
+                val modelUrl = "https://huggingface.co/PurpleSoft/embeddinggemma-300m-seq2048-litertlm/resolve/main/embeddinggemma-300m-seq2048.litertlm"
                 val request = Request.Builder()
                     .url(modelUrl)
                     .header("User-Agent", browserUserAgent)

@@ -68,16 +68,22 @@ class IndexingRepository(
 
             if (!embeddingEngine.isModelDownloaded()) {
                 _indexingProgress.value = IndexingProgress("Downloading Model (0%)")
-                val success = embeddingEngine.downloadModelAndVocab { status, progress ->
-                    _indexingProgress.value = IndexingProgress(
-                        status = status,
-                        totalFiles = 0,
-                        processedFiles = 0,
-                        currentFileName = "Gemma Model"
-                    )
-                }
-                if (!success) {
-                    throw IllegalStateException("Failed to download Gemma Embedding Model.")
+                try {
+                    val success = embeddingEngine.downloadModelAndVocab { status, progress ->
+                        _indexingProgress.value = IndexingProgress(
+                            status = status,
+                            totalFiles = 0,
+                            processedFiles = 0,
+                            currentFileName = "Gemma Model"
+                        )
+                    }
+                    if (!success) {
+                        Log.e(tag, "Failed to download Gemma Embedding Model. Continuing without semantic search.")
+                    }
+                } catch (e: Exception) {
+                    // Semantic search is an optional enhancement — a model download/init
+                    // failure must not block filename/keyword/OCR-based scanning and indexing.
+                    Log.e(tag, "Embedding model unavailable. Continuing without semantic search.", e)
                 }
             }
             _indexingProgress.value = IndexingProgress("Scanning")
@@ -526,16 +532,22 @@ class IndexingRepository(
 
             if (!embeddingEngine.isModelDownloaded()) {
                 _indexingProgress.value = IndexingProgress("Downloading Model (0%)")
-                val success = embeddingEngine.downloadModelAndVocab { status, progress ->
-                    _indexingProgress.value = IndexingProgress(
-                        status = status,
-                        totalFiles = 0,
-                        processedFiles = 0,
-                        currentFileName = "Gemma Model"
-                    )
-                }
-                if (!success) {
-                    throw IllegalStateException("Failed to download Gemma Embedding Model.")
+                try {
+                    val success = embeddingEngine.downloadModelAndVocab { status, progress ->
+                        _indexingProgress.value = IndexingProgress(
+                            status = status,
+                            totalFiles = 0,
+                            processedFiles = 0,
+                            currentFileName = "Gemma Model"
+                        )
+                    }
+                    if (!success) {
+                        Log.e(tag, "Failed to download Gemma Embedding Model. Continuing without semantic search.")
+                    }
+                } catch (e: Exception) {
+                    // Semantic search is an optional enhancement — a model download/init
+                    // failure must not block filename/keyword/OCR-based scanning and indexing.
+                    Log.e(tag, "Embedding model unavailable. Continuing without semantic search.", e)
                 }
             }
             _indexingProgress.value = IndexingProgress("Scanning")
@@ -591,7 +603,7 @@ class IndexingRepository(
             _indexingProgress.value = IndexingProgress("Processing", sandboxDocuments.size, count, template.name)
 
             // Setup a fake local file Uri or standard content scheme for index identity
-            val fakeUri = "content://com.findmydoc.sandbox/${template.name.hashCode()}"
+            val fakeUri = "content://com.seekmydocs.sandbox/${template.name.hashCode()}"
             val docHash = md5(template.name + template.size + System.currentTimeMillis())
 
             val existing = docDao.getDocumentByUri(fakeUri)
@@ -631,11 +643,18 @@ class IndexingRepository(
                 }
                 val chunkIds = docDao.insertChunks(chunkEntities)
 
-                val embEntities = chunkIds.mapIndexed { idx, cid ->
-                    EmbeddingEntity(chunkId = cid, vector = embeddingEngine.embed(chunks[idx].text))
+                try {
+                    // Semantic search is an optional enhancement — an embedding failure for
+                    // this document must not abort indexing of the remaining sandbox files.
+                    val embEntities = chunkIds.mapIndexed { idx, cid ->
+                        EmbeddingEntity(chunkId = cid, vector = embeddingEngine.embed(chunks[idx].text))
+                    }
+                    docDao.insertEmbeddings(embEntities)
+                    docDao.insertDocument(docEntity.copy(id = docId, embeddingCompleted = true))
+                } catch (e: Exception) {
+                    Log.e(tag, "Embedding failed for sandbox doc ${template.name}. Continuing without semantic search.", e)
+                    docDao.insertDocument(docEntity.copy(id = docId, embeddingCompleted = false))
                 }
-                docDao.insertEmbeddings(embEntities)
-                docDao.insertDocument(docEntity.copy(id = docId, embeddingCompleted = true))
             }
 
             count++
