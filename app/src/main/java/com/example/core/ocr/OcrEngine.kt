@@ -1,6 +1,12 @@
 package com.example.core.ocr
 
 import android.graphics.Bitmap
+import android.util.Log
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 data class OcrResult(
     val text: String,
@@ -13,38 +19,38 @@ interface OcrEngine {
 }
 
 /**
- * An offline, efficient on-device OCR engine.
- * Falls back gracefully to intelligent OCR processing for images/PDFs.
+ * On-device OCR engine backed by ML Kit's Play Services Text Recognition client.
  */
 class LocalOcrEngine : OcrEngine {
+
+    private val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
     override suspend fun extractText(images: List<Bitmap>): OcrResult {
         if (images.isEmpty()) {
             return OcrResult("", 1.0f, emptyList())
         }
 
-        val pagesText = mutableListOf<String>()
-        var totalConfidence = 0.0f
-
-        for ((index, bitmap) in images.withIndex()) {
-            // In a real device, ML Kit Text Recognition would process the bitmap:
-            // val image = InputImage.fromBitmap(bitmap, 0)
-            // val result = recognizer.process(image).await()
-            // Here, we provide an intelligent local recognition simulation
-            // that is fast, safe, and guarantees 100% offline functionality.
-            
-            val simulatedText = "Scanned Content from Page ${index + 1}: [Invoiced Details, Electricity Bill, Receipt Statement, Timetable, Resume Text Chunk metadata summary]"
-            pagesText.add(simulatedText)
-            totalConfidence += 0.92f
-        }
-
+        val pagesText = images.map { bitmap -> recognizeBitmap(bitmap) }
         val combinedText = pagesText.joinToString("\n\n")
-        val averageConfidence = totalConfidence / images.size
+        val confidence = if (pagesText.any { it.isNotBlank() }) 1.0f else 0.0f
 
         return OcrResult(
             text = combinedText,
-            confidence = averageConfidence,
+            confidence = confidence,
             pagesText = pagesText
         )
     }
+
+    private suspend fun recognizeBitmap(bitmap: Bitmap): String =
+        suspendCancellableCoroutine { continuation ->
+            val image = InputImage.fromBitmap(bitmap, 0)
+            recognizer.process(image)
+                .addOnSuccessListener { visionText ->
+                    continuation.resume(visionText.text)
+                }
+                .addOnFailureListener { e ->
+                    Log.e("LocalOcrEngine", "ML Kit text recognition failed", e)
+                    continuation.resume("")
+                }
+        }
 }
