@@ -100,4 +100,4 @@ Supply your own keystore and credentials before building a release APK/AAB — n
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+GNU GPLv3 — see [LICENSE](LICENSE).
