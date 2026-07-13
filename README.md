@@ -133,6 +133,24 @@ Release builds are signed using a keystore referenced by environment variables i
 
 Supply your own keystore and credentials before building a release APK/AAB — none are committed to the repository. The app is built with per-ABI splits (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`) plus a universal APK.
 
+## Contributing
+
+Contributions are welcome — bug fixes, new format support, performance improvements, and documentation are all useful.
+
+- **Never commit or open PRs directly against `main`.** Create a separate branch for your change:
+  ```
+  git checkout -b fix/short-description
+  ```
+  (use `feat/`, `fix/`, `docs/`, `chore/`, etc. as a prefix for the branch name)
+- Keep PRs focused — one logical change per PR is easier to review than a bundle of unrelated fixes.
+- Make sure the project builds and existing tests pass before opening a PR:
+  ```
+  ./gradlew testDebugUnitTest
+  ```
+- Add or update tests for behavior you change, where practical.
+- Write a clear PR description: what changed and why, not just what.
+- For larger changes (new dependencies, architecture changes, new features), please open an issue to discuss the approach first — it saves rework on both sides.
+
 ## License
 
 <div align="center">
